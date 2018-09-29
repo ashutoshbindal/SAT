@@ -5,7 +5,7 @@ int main()
 {
 	int vertices,edges,K;
 	int M[vertices][K],E[vertices][vertices];
-	
+
 	for (int i = 0; i < vertices; ++i)
 	{
 		for (int j=0; j<K; j++)
@@ -23,7 +23,7 @@ int main()
 	}
 
 	//clause 1: every vertex should be present in atleast one of the K subgraphs
-	long long int terms=1;
+	int terms=1;
 	for (int i = 0; i < vertices; ++i)
 	{
 		for (int j=0; j < K ; j++)
@@ -40,7 +40,7 @@ int main()
 		{
 			if ( E[i][j] )
 			{
-				
+
 			}
 		}
 	}
