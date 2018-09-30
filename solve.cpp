@@ -6,6 +6,25 @@
 
 using namespace std;
 
+void split(string str, string splitBy, vector<string>& tokens)
+{
+    tokens.push_back(str);
+    size_t splitAt;
+    size_t splitLen = splitBy.size();
+    string frag;
+    while(true)
+    {
+        frag = tokens.back();
+        splitAt = frag.find(splitBy);
+        if(splitAt == string::npos)
+        {
+            break;
+        }
+        tokens.back() = frag.substr(0, splitAt);
+        tokens.push_back(frag.substr(splitAt+splitLen, frag.size()-(splitAt+splitLen)));
+    }
+}
+
 int main(){
     //variable declaration
     int n, e, k;
@@ -164,7 +183,51 @@ int main(){
     if(str == "SAT"){
         while(getline(fin, str)){
             //process the satisfiability
+            vector<string> temp;
+            split(str, " ", temp);
+            temp.pop_back();
+
+            //translating the output into matrix
+            int iter = 0;
+            for(int i=0; i<n; i++){
+                for(int j=0; j<k; j++){
+                    string temp_literal = temp[iter];
+                    int lit = stoi(temp_literal);
+                    if(lit > 0){
+                        m[i][j] = 1;
+                    }
+
+                    iter++;
+                }
+            }
+            //conditional
+            break;
         }
+
+        //writing in the output file
+        fout.open("answer.txt", std::ios_base::app);
+        for(int i=1; i<=k; i++){
+            int node_exist = 0;
+            for(int j=0; j<n; j++){
+                if(m[j][i-1] == 1){
+                    node_exist++;
+                }
+            }
+            fout<<"#"<<to_string(i)<<" "<<to_string(node_exist)<<"\n";
+            bool flag = false;
+            for(int j=0; j<n; j++){
+                if(m[j][i-1] == 1){
+                    if(flag){
+                        fout<<to_string(j+1);
+                    }
+                    else{
+                        fout<<" "<<to_string(j+1);
+                    }
+                }
+            }
+            fout<<"\n\n"<<endl;
+        }
+        fout.close();
     }
     else{
         fout.open("answer.txt", std::ios_base::app);
