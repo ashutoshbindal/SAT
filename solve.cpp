@@ -72,7 +72,9 @@ int main(){
     //writing into a filename
     ofstream fout;
     fout.open("input.txt", std::ios_base::app);
-    fout<<"p cnf # #\n";
+    int num_variables = (k*k*n) + (n*n) + (e*k);
+    int num_clauses = n + (e*(1 + 2*k)) + (n*n) + ((n*(n-1)*k)/2) + (k*(k-1)*(1+(2*n)));
+    fout<<"p cnf " + to_string(num_variables) + " " + to_string(num_clauses) + "\n";
 
     int thresh = 0;
     int count = 0;
