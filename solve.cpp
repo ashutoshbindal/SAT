@@ -28,7 +28,7 @@ void split(string str, string splitBy, vector<string>& tokens)
 int main(){
     //variable declaration
     int n, e, k;
-    vector<pair<int, int>> edge;
+    vector<pair<int, int> > edge;
 
     //reading from the file
     ifstream fin;
@@ -176,7 +176,6 @@ int main(){
 
     //reading form the output file
     string str;
-    ifstream fin;
     fin.open("output.txt");
     getline(fin, str);
 
