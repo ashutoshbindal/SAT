@@ -216,15 +216,16 @@ int main(){
             bool flag = false;
             for(int j=0; j<n; j++){
                 if(m[j][i-1] == 1){
-                    if(flag){
+                    if(!flag){
                         fout<<to_string(j+1);
+                        flag = true;
                     }
                     else{
                         fout<<" "<<to_string(j+1);
                     }
                 }
             }
-            fout<<"\n\n"<<endl;
+            fout<<"\n";
         }
         fout.close();
     }
