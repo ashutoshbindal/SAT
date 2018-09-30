@@ -23,8 +23,8 @@ int main(){
         int a, b;
         fin>>a>>b;
         //start the indexing from 0
-        a -= 1;
-        b -= 1;
+        // a -= 1;
+        // b -= 1;
         // cout<<a<<" "<<b<<endl;
         pair<int, int> temp;
         temp = {a, b};
@@ -55,6 +55,9 @@ int main(){
     fout.open("input.txt", std::ios_base::app);
     fout<<"p cnf # #\n";
 
+    int thresh = 0;
+    int count = 0;
+
     //clause 1: all nodes be present in atleast one subgraph
     for(int i=0; i<n; i++){
         for(int j=0; j<k; j++){
@@ -62,12 +65,112 @@ int main(){
         }
         fout<<"0\n";
     }
+    thresh = n*k;
+
+    //initialize for clause 3
+    int temp_edge[n][n];
+    for(int i=0; i<n; i++){
+        for(int j=0; j<n; j++){
+            temp_edge[i][j] = 0;
+        }
+    }
 
     //clause 2
+    count = thresh + 1;
+    for(int i=0; i<edge.size(); i++){
+        count = (n+i)*k + 1;
+        for(int j=0; j<k; j++){
+            fout<<to_string(count)<<" ";
+            count++;
+        }
+        fout<<"0\n";
+        count = (n+i)*k + 1;
+
+        int first_node = edge[i].first;
+        int second_node = edge[i].second;
+
+        //updating for clause 3
+        temp_edge[first_node-1][second_node-1] = 1;
+        temp_edge[second_node-1][first_node-1] = 1;
+
+        for(int j=0; j<k; j++){
+            fout<<"-"<<to_string(count)<<" "<<to_string((first_node-1)*k + j+1)<<" 0\n";
+            fout<<"-"<<to_string(count)<<" "<<to_string((second_node-1)*k + j+1)<<" 0\n";
+            count++;
+        }
+    }
+    thresh = (n*k) + (edge.size()*k);
 
     //clause 3
+    //setting all the edges appropritately
+    count = 1;
+    for(int i=0; i<n; i++){
+        for(int j=0; j<n; j++){
+            if(temp_edge[i][j] == 1){
+                fout<<to_string(thresh+count)<<" 0\n";
+            }
+            else{
+                fout<<"-"<<to_string(thresh+count)<<" 0\n";
+            }
+            count++;
+        }
+    }
+    //writing the clause
+    for(int z=1; z<=k; z++){
+        //iterating over all the combination of edges
+        for(int i=0; i<n; i++){
+            for(int j=i+1; j<n; j++){
+                fout<<"-"<<to_string(i*k + z)<<" -"<<to_string(j*k + z)<<" "<<to_string(thresh + (i*n) + j + 1)<<" 0\n";
+            }
+        }
+    }
+    thresh += (n*n);
 
     //clause 4
+    for(int i=0; i<k; i++){
+        for(int j=0; j<k; j++){
+            if(i == j){
+                continue;
+            }
+            else{
+                //writing the n-extra literals
+                for(int z=1; z<=n; z++){
+                    fout<<to_string(thresh + z)<<" ";
+                }
+                fout<<"0\n";
+
+                //writing the clauses
+                for(int z=1; z<=n; z++){
+                    fout<<"-"<<to_string(thresh+z)<<" "<<to_string((z-1)*k + i+1)<<" 0\n";
+                    fout<<"-"<<to_string(thresh+z)<<" -"<<to_string((z-1)*k + j+1)<<" 0\n";
+                }
+
+                thresh += n;
+            }
+        }
+    }
 
     fout.close();
+
+    //minisat call
+    system("./MiniSat_v1.14_linux input.txt output.txt");
+
+    //reading form the output file
+    string str;
+    ifstream fin;
+    fin.open("output.txt");
+    getline(fin, str);
+
+    if(str == "SAT"){
+        while(getline(fin, str)){
+            //process the satisfiability
+        }
+    }
+    else{
+        fout.open("answer.txt", std::ios_base::app);
+        fout<<"0\n";
+        fout.close();
+    }
+
+    fin.close();
 }
